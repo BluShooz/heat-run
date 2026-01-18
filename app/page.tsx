@@ -1,21 +1,16 @@
 import GameCanvas from '@/components/GameCanvas';
+import PhoneUI from '@/components/PhoneUI';
 
 export default function Home() {
   return (
-    <main className="w-screen h-screen overflow-hidden bg-black text-white">
+    <main className="w-screen h-screen overflow-hidden bg-black relative">
       <GameCanvas />
+      <PhoneUI />
 
-      {/* UI Overlay Layer */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none p-8 z-10 flex flex-col justify-between">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-4xl font-black tracking-tighter uppercase italic opacity-80">Heat Run</h1>
-            <p className="text-xs opacity-50 font-mono">Build 0.0.1</p>
-          </div>
-          <div className="text-right">
-            <span className="bg-red-600 text-black px-2 py-1 font-bold text-xs">LIVE</span>
-          </div>
-        </div>
+      {/* Introduction Fade / Cinematic Overlay if needed */}
+      <div className="absolute top-8 left-8 pointer-events-none opacity-50 mix-blend-overlay">
+        <h1 className="text-2xl font-bold tracking-widest uppercase font-mono">DIRTY MONEY</h1>
+        <p className="text-xs tracking-[0.2em] uppercase">Cut Off</p>
       </div>
     </main>
   );

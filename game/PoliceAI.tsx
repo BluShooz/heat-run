@@ -25,7 +25,7 @@ export function PoliceAI({ id, startPos }: { id: number, startPos: [number, numb
     const rigidBodyRef = useRef<RapierRigidBody>(null);
     const meshRef = useRef<Group>(null);
     const { world, rapier } = useRapier(); // rapier instance
-    const { increaseHeat, setSpotted } = useGameStore();
+    // const { increaseHeat, setSpotted } = useGameStore(); Deprecated
 
     const [aiState, setAiState] = useState<AIState>('PATROL');
     const [targetPoint, setTargetPoint] = useState<Vector3>(PATROL_POINTS[0]);
@@ -75,7 +75,7 @@ export function PoliceAI({ id, startPos }: { id: number, startPos: [number, numb
             case 'PATROL':
                 if (canSeePlayer) {
                     setAiState('CHASE');
-                    setSpotted(true);
+                    // setSpotted(true);
                 }
                 // Move to waypoint
                 const toPoint = targetPoint.clone().sub(currentPos);
@@ -92,21 +92,21 @@ export function PoliceAI({ id, startPos }: { id: number, startPos: [number, numb
                 if (canSeePlayer) {
                     lastSpottedPos.current = playerPos.clone();
                     moveTowards(rb, playerPos, CHASE_SPEED, delta);
-                    increaseHeat(10 * delta); // Rapid heat increase
+                    // increaseHeat(10 * delta); // Rapid heat increase
 
                     // Rotation to face player
                     lookAt(meshRef.current, playerPos);
 
                 } else {
                     setAiState('SEARCH');
-                    setSpotted(false);
+                    // setSpotted(false);
                 }
                 break;
 
             case 'SEARCH':
                 if (canSeePlayer) {
                     setAiState('CHASE');
-                    setSpotted(true);
+                    // setSpotted(true);
                 } else if (lastSpottedPos.current) {
                     moveTowards(rb, lastSpottedPos.current, CHASE_SPEED * 0.5, delta);
                     if (currentPos.distanceTo(lastSpottedPos.current) < 2) {

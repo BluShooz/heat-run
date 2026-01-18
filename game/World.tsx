@@ -1,8 +1,8 @@
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { RigidBody, CuboidCollider } from '@react-three/rapier';
-import { Environment, Stars, Cloud, Instance, Instances, Sparkles } from '@react-three/drei';
-import { Color, MeshStandardMaterial, Vector3 } from 'three';
+import { Environment, Cloud, Sparkles } from '@react-three/drei';
+import { Color, MeshStandardMaterial, Vector3, FogExp2 } from 'three';
 import { AsphaltShader } from './Shaders/WetAsphalt';
 
 export function World() {
@@ -16,17 +16,24 @@ export function World() {
 
     return (
         <group>
-            <Environment preset="night" blur={0.8} background />
-            <Stars radius={100} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+            {/* Atmosphere: Overcast city night */}
+            {/* We use a dark color for fog to blend distant objects */}
+            <color attach="background" args={['#050505']} />
+            <fogExp2 attach="fog" args={['#050505', 0.03]} />
 
-            {/* Rain Particles - Simple Sparkles for now, can upgrade to InstancedMesh for lines */}
+            {/* Lighting: HDR + Dull Ambient */}
+            {/* Low saturation environment */}
+            <Environment preset="city" blur={1} background={false} />
+            <ambientLight intensity={0.1} color="#445566" />
+
+            {/* Rain - Heavier, more noticeable */}
             <Sparkles
-                count={5000}
+                count={8000}
                 scale={[100, 40, 100]}
-                size={4}
-                speed={4}
-                opacity={0.4}
-                color="#aaa"
+                size={3}
+                speed={5}
+                opacity={0.2}
+                color="#ccc"
                 position={[0, 20, 0]}
             />
 
@@ -37,50 +44,65 @@ export function World() {
                     <planeGeometry args={[200, 200, 256, 256]} />
                     <meshStandardMaterial
                         ref={asphaltRef}
-                        color="#111"
+                        color="#0a0a0a"
                         roughness={0.9}
-                        metalness={0.2}
+                        metalness={0.4}
                         onBeforeCompile={AsphaltShader.onBeforeCompile}
                     />
                 </mesh>
             </RigidBody>
 
-            {/* Street Lights */}
-            {[-20, 0, 20].map((z) => (
-                <group key={z} position={[10, 5, z]}>
+            {/* Street Lights - Fewer, more dramatic */}
+            {[-40, -10, 20, 50].map((z) => (
+                <group key={z} position={[15, 6, z]}>
                     <spotLight
-                        color="#ffaa00"
-                        intensity={20}
-                        distance={30}
-                        angle={0.6}
-                        penumbra={0.5}
+                        color="#ffeebb"
+                        intensity={15}
+                        distance={40}
+                        angle={0.5}
+                        penumbra={1}
                         castShadow
                         shadow-bias={-0.0001}
                     />
                     <mesh position={[0, 0.5, 0]}>
-                        <cylinderGeometry args={[0.1, 0.1, 6]} />
-                        <meshStandardMaterial color="#333" />
+                        <cylinderGeometry args={[0.15, 0.15, 7]} />
+                        <meshStandardMaterial color="#111" />
                     </mesh>
-                    {/* Volumetric Fake (Cone) */}
-                    <mesh position={[0, -3, 0]} rotation={[0, 0, 0]}>
-                        <coneGeometry args={[3, 10, 32, 1, true]} />
-                        <meshBasicMaterial color="#ffaa00" transparent opacity={0.03} depthWrite={false} />
+                    {/* Volumetric Haze around light */}
+                    <mesh position={[0, -2, 0]}>
+                        <sphereGeometry args={[4, 16, 16]} />
+                        <meshBasicMaterial color="#ffeebb" transparent opacity={0.02} depthWrite={false} />
                     </mesh>
                 </group>
             ))}
 
-            {/* City Blocks */}
+            {/* City Blocks - Brutalist Concrete */}
             <RigidBody type="fixed">
-                <CuboidCollider args={[5, 5, 20]} position={[-15, 5, 0]} />
-                <mesh position={[-15, 5, 0]} castShadow receiveShadow>
-                    <boxGeometry args={[10, 10, 40]} />
-                    <meshStandardMaterial color="#222" />
+                {/* Left Buildings */}
+                <CuboidCollider args={[10, 20, 100]} position={[-25, 20, 0]} />
+                <mesh position={[-25, 20, 0]} castShadow receiveShadow>
+                    <boxGeometry args={[20, 40, 200]} />
+                    <meshStandardMaterial color="#222" roughness={0.8} />
                 </mesh>
 
-                <CuboidCollider args={[5, 10, 10]} position={[20, 10, 10]} />
-                <mesh position={[20, 10, 10]} castShadow receiveShadow>
-                    <boxGeometry args={[10, 20, 20]} />
-                    <meshStandardMaterial color="#1a1a1a" />
+                {/* Right Buildings */}
+                <CuboidCollider args={[10, 20, 100]} position={[35, 20, 0]} />
+                <mesh position={[35, 20, 0]} castShadow receiveShadow>
+                    <boxGeometry args={[20, 40, 200]} />
+                    <meshStandardMaterial color="#222" roughness={0.8} />
+                </mesh>
+
+                {/* Obstacles */}
+                <CuboidCollider args={[1, 1, 1]} position={[0, 1, 15]} />
+                <mesh position={[0, 1, 15]} castShadow receiveShadow>
+                    <boxGeometry args={[2, 2, 2]} />
+                    <meshStandardMaterial color="#333" roughness={0.5} />
+                </mesh>
+
+                <CuboidCollider args={[2, 1.5, 0.5]} position={[-5, 1.5, -10]} />
+                <mesh position={[-5, 1.5, -10]} castShadow receiveShadow>
+                    <boxGeometry args={[4, 3, 1]} />
+                    <meshStandardMaterial color="#444" roughness={0.9} />
                 </mesh>
             </RigidBody>
         </group>

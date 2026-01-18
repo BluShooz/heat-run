@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Heat Run",
-  description: "Cinematic Pursuit Simulator",
+  title: "DIRTY MONEY: CUT OFF",
+  description: "Third-Person Street Survival",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
 };
 
 export default function RootLayout({
@@ -13,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased bg-black text-white">
+      <body className="antialiased bg-stone-950 text-stone-200">
         {children}
       </body>
     </html>

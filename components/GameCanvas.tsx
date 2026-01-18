@@ -3,8 +3,9 @@
 import { Canvas } from '@react-three/fiber';
 import { Loader } from '@react-three/drei';
 import { Physics } from '../game/Physics';
+
 import { Player } from '../game/Player';
-import { CameraController } from '../game/CameraController';
+import { CameraSystem } from '../game/CameraSystem';
 import { World } from '../game/World';
 import { PoliceAI } from '../game/PoliceAI';
 import { GameEffects } from '../game/PostProcessing';
@@ -34,7 +35,7 @@ export default function GameCanvas() {
                         />
 
                         <Player />
-                        <CameraController />
+                        <CameraSystem />
                         <World />
 
                         <PoliceAI id={1} startPos={[10, 5, 10]} />
